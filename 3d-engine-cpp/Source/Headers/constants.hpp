@@ -22,8 +22,8 @@ namespace Constants
 #else
     constexpr auto RENDER_MODE = GL_FILL;
 #endif
-    const std::string TEXTURE_LOCATION = "./Assets/Textures";
-    const std::string SHADERS_LOCATION = "./Source/Shaders";
+    const std::string TEXTURE_LOCATION = "./3d-engine-cpp/Assets/Textures";
+    const std::string SHADERS_LOCATION = "./3d-engine-cpp/Source/Shaders";
 } // namespace Constants
 
 #endif // CONSTANTS_H
