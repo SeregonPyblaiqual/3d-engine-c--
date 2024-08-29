@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\essentials">
+      <UniqueIdentifier>{566d3f6e-8c8c-4c6c-9717-2c0be120de98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\nonessentials">
+      <UniqueIdentifier>{9a6942f4-afdb-495c-bf19-78e70647b30a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shaders">
+      <UniqueIdentifier>{44c206f2-a2a5-4081-962c-3469eb5e8d68}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Implementations\utilities.cpp">
+      <Filter>Source Files\essentials</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Implementations\main.cpp">
+      <Filter>Source Files\essentials</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Implementations\stb_image.cpp">
+      <Filter>Source Files\nonessentials</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Implementations\glad.c">
+      <Filter>Source Files\nonessentials</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Implementations\MurmurHash2.cpp">
+      <Filter>Source Files\nonessentials</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Implementations\fileUtilities.cpp">
+      <Filter>Source Files\essentials</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Implementations\noise.cpp">
+      <Filter>Source Files\essentials</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Implementations\camera.cpp">
+      <Filter>Source Files\essentials</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Implementations\application.cpp">
+      <Filter>Source Files\essentials</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Implementations\gameComponents.cpp">
+      <Filter>Source Files\essentials</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Implementations\glComponents.cpp">
+      <Filter>Source Files\essentials</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Implementations\mapManager.cpp">
+      <Filter>Source Files\essentials</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\Downloads\wall.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Textures\grassx1000.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Textures\container.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Textures\grass.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Textures\grass_block_top_x16.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Textures\grass_block_top_x64.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Headers\utilities.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Headers\fileUtilities.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Headers\noise.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Headers\application.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Headers\constants.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Headers\camera.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Headers\mapManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Headers\gameComponents.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Headers\glComponents.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Headers\shader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\Shaders\shader.vs">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="Source\Shaders\shader.fs">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="Source\Shaders\shaderv2.fs">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="Source\Shaders\shaderv2.vs">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\map.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
+</Project>
