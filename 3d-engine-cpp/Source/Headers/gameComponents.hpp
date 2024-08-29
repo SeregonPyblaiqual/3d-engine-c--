@@ -4,6 +4,8 @@
 
 #include "camera.hpp"
 #include "mapManager.hpp"
+
+/* Handles game elements */
 class GameComponents
 {
 public:

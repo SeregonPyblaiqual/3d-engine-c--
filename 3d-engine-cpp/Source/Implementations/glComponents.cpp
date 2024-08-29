@@ -4,21 +4,15 @@ GlComponents::GlComponents() {}
 
 void GlComponents::initialise_components()
 {
-    m_shader = std::optional<Shader>{Shader((Constants::SHADERS_LOCATION + std::string("/shaderv2.vs")).c_str(),
-                                            (Constants::SHADERS_LOCATION + std::string("/shaderv2.fs")).c_str())};
-
-    // std::array<GLuint, 2> GPU_data = _loadVAO(m_shader.value());
-    // m_vertex_arrays.push_back(GPU_data[0]);
-    // m_buffers.push_back(GPU_data[1]);
-    //  buffers.push_back(GPU_data[2]);
+    m_shader = std::optional<Shader>{Shader((Constants::SHADERS_LOCATION + std::string("/shader.vs")).c_str(),
+                                            (Constants::SHADERS_LOCATION + std::string("/shader.fs")).c_str())};
 
     glPolygonMode(GL_FRONT_AND_BACK, Constants::RENDER_MODE);
-    glfwSwapInterval(0); // no cap of fps
+    // glfwSwapInterval(0); // no cap of fps
 }
 
 void GlComponents::gl_init_buffers(std::vector<GLfloat> &vertices, std::vector<GLuint> &triangles)
 {
-    // std::array<GLuint, 2> position_buffers = _init_buffers(m_shader.value(), data);
     std::array<GLuint, 3> position_buffers = _loadVAO_v2(vertices, triangles);
 
     m_vertex_arrays.push_back(position_buffers[0]);

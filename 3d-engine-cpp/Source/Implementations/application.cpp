@@ -1,14 +1,21 @@
 #include "application.hpp"
 
-Application::Application() : m_glcomponent(), m_game_components(), m_frame_count(0), m_first_mouse(true)
+Application::Application() : m_glcomponent(),     // does nothing
+                             m_game_components(), // builds the map mesh and centers the camera above ground
+                             m_frame_counter(0),
+                             
+                             m_first_mouse(true)
+                             // Tries to prevent sudden movement when mouse is first detected by application
+                             // ! Not working yet
 {
-    // Noise initialisation
-    // ====================
-
+    // UI related variables: only display new positions
     m_last_coordinates[0] = Constants::WINDOW_WIDTH / 2;
     m_last_coordinates[1] = Constants::WINDOW_HEIGHT / 2;
 }
 Application::~Application() {}
+void initialiseApplication()
+{
+}
 int Application::mainloop()
 {
     m_window = m_glcomponent.initWindow();
@@ -21,8 +28,6 @@ int Application::mainloop()
 
     // Opengl initialisation
     // =====================
-
-    _setup_spawn_point();
 
     // Variables for FPS calculation
     float last_time = float(glfwGetTime()), delta_time;
@@ -64,22 +69,6 @@ int Application::mainloop()
     return 0;
 }
 
-void Application::_setup_spawn_point()
-{
-    const unsigned int half_const = Constants::MAP_SIZE / 2;
-    unsigned int centre = 0; // half_const * Constants::MAP_SIZE + half_const;
-    // DEBUG
-    /*
-    if (centre > m_game_components.m_map_manager.m_data.size())
-    {
-        centre = 0;
-    }
-    */
-    // glm::vec3 spawn_point = m_game_components.m_map_manager.m_data[centre];
-    // spawn_point[1] = spawn_point[1] + 2.0f;
-    // m_game_components.m_camera.set_position(spawn_point);
-}
-
 void Application::_show_UI()
 {
     if (m_game_components.m_camera.compute_camera_floored_position())
@@ -99,7 +88,7 @@ void Application::_show_UI()
     }*/
 
     // Calculate delta time and FPS
-    _showFPS(m_last_time, m_frame_count);
+    _showFPS(m_last_time, m_frame_counter);
 }
 
 glm::mat4 Application::_processInput(float &delta_time)

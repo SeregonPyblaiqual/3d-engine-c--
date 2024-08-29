@@ -13,6 +13,7 @@
 #include "constants.hpp"
 #include "shader.hpp"
 
+/* Handles OpenGl related rendering features */
 class GlComponents
 {
 public:

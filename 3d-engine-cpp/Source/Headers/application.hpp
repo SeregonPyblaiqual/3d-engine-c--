@@ -12,6 +12,7 @@
 #include "glComponents.hpp"
 #include "gameComponents.hpp"
 
+/* Responsible for handling inputs and displaying information */
 class Application
 {
 public:
@@ -21,18 +22,26 @@ public:
     int mainloop();
 
 private:
+    // FPS related
+    // ===========
     double m_last_time;
+    unsigned int m_frame_counter;
+
+    // Application "backend" related
+    // =============================
+
     GLFWwindow *m_window;
     GlComponents m_glcomponent;
     GameComponents m_game_components;
-    unsigned int m_frame_count;
-    std::array<float, 2> m_last_coordinates;
     bool m_first_mouse;
-    void _setup_spawn_point();
-    void _show_UI();
-
     glm::mat4 _processInput(float &delta_time);
     static void _mouse_callback_static(GLFWwindow *window, double xpos, double ypos);
     void _mouse_callback(double xpos, double ypos);
+
+    // UI related
+    // ==========
+
+    std::array<float, 2> m_last_coordinates;
+    void _show_UI();
     void _showFPS(double &lastTime, unsigned int &frameCount);
 };
