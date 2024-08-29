@@ -833,8 +833,7 @@ void compute_noise_attributes_v_brute_force(FastNoiseLite *noise, int base_x, in
     x - x > z
 
     */
-    //_add_top(mesh_vertex_buffer, mesh_triangle_buffer, std::array<GLint, 3>{0, -1, 0}, std::array<GLfloat, 3>{0.0f, 1.0f, 0.0f}, 1.0f);
-    // _add_west(mesh_vertex_buffer, mesh_triangle_buffer, std::array<GLint, 3>{0, 0, 0}, std::array<GLfloat, 3>{0.0f, 0.0f, -1.0f}, 1.0f);
+
     for (int x = base_x; x < max_x; x++) // max_x
     {
         for (int z = base_z; z < max_z; z++) // max_z
