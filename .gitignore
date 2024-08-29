@@ -1,0 +1,8 @@
+[Bb]ackup/
+[Bb]uild/Output
+[Bb]uild/x64
+3d engine c++/.git
+
+.vs
+.vscode
+
