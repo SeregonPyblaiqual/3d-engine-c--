@@ -28,6 +28,7 @@ public:
     std::vector<std::vector<int>> m_height_map_with_offset;
     std::vector<std::vector<int>> m_offset_map;
     std::vector<GLfloat> m_mesh_vertex;
+    std::vector<GLuint> m_mesh_packed_data;
     std::vector<GLuint> m_mesh_triangle;
     std::vector<std::array<int, 3>> m_cubes_positions;
     FastNoiseLite m_noise;

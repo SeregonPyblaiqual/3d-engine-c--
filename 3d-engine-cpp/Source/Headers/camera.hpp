@@ -24,12 +24,12 @@ public:
 
     // update->plane
 
-    void update_front_manner(float &delta_time);
-    void update_ortho_front_manner(float &delta_time);
-    void update_up_manner(float &delta_time);
-    void update_west_manner(float &delta_time);
-    void update_north_manner(float &delta_time);
-    void update_angles(std::array<float, 2> &offset);
+    void update_front_manner(const float &delta_time);
+    void update_ortho_front_manner(const float &delta_time);
+    void update_up_manner(const float &delta_time);
+    void update_west_manner(const float &delta_time);
+    void update_north_manner(const float &delta_time);
+    void update_angles(const std::array<float, 2> &offset);
 
     void increase_speed();
     void lower_speed();

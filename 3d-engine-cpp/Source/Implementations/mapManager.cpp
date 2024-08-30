@@ -37,19 +37,19 @@ namespace INDEXES
 
 namespace LIGHTING
 {
-    GLfloat South = 0.8f;
-    GLfloat North = 0.8f;
-    GLfloat Top = 1.0f;
-    GLfloat Bottom = 0.2f;
-    GLfloat East = 0.6f;
-    GLfloat West = 0.8f;
+    GLuint South = 0x0;
+    GLuint North = 0x0;
+    GLuint Top = 0x1;
+    GLuint East = 0x2;
+    GLuint West = 0x2;
+    GLuint Bottom = 0x3;
 };
 
-std::array<std::array<float, 2>, 4> face_to_tex_coord = {{
-    {{0.0f, 1.0f}},
-    {{1.0f, 1.0f}},
-    {{0.0f, 0.0f}},
-    {{1.0f, 0.0f}},
+std::array<GLuint, 4> face_to_tex_index = {{
+    (0x0) + (1 << 2),
+    (1 << 3) + (1 << 2),
+    (0x0) + (0x0),
+    (1 << 3) + (0x0),
 }};
 
 const std::array<GLuint, 4> *face_to_indexes(const faceID &face_id)
@@ -76,14 +76,14 @@ const std::array<GLuint, 4> *face_to_indexes(const faceID &face_id)
         vert_indexes = &INDEXES::Bottom;
         break;
     default:
-        break;
+        throw std::invalid_argument("Invalid faceID"); // Better error handling
     }
     return vert_indexes;
 }
 
-const float *face_to_lighting(const faceID &face_id)
+const GLuint *face_to_lighting(const faceID &face_id)
 {
-    const float *lighting = nullptr;
+    const GLuint *lighting = nullptr;
     switch (face_id)
     {
     case faceID::SOUTH:
@@ -105,7 +105,7 @@ const float *face_to_lighting(const faceID &face_id)
         lighting = &LIGHTING::Bottom;
         break;
     default:
-        break;
+        throw std::invalid_argument("Invalid faceID"); // Better error handling
     }
     return lighting;
 }
@@ -113,7 +113,7 @@ const float *face_to_lighting(const faceID &face_id)
 void MapManager::_add_face(const std::array<GLint, 3> &vertice, const faceID &face_id)
 {
 
-    unsigned int starting_index = m_mesh_vertex.size() / Constants::VERTEX_ATTRIBUTES;
+    unsigned int starting_index = m_mesh_vertex.size() / 3;
     auto vert_indexes = face_to_indexes(face_id);
     auto face_lighting = face_to_lighting(face_id);
     for (unsigned int i_face = 0; i_face < 4; i_face++)
@@ -122,9 +122,8 @@ void MapManager::_add_face(const std::array<GLint, 3> &vertice, const faceID &fa
         {
             m_mesh_vertex.push_back(vertice[i_vertice] + vertices_offset[vert_indexes->at(i_face)][i_vertice]);
         }
-        m_mesh_vertex.push_back(face_to_tex_coord[i_face][0]);
-        m_mesh_vertex.push_back(face_to_tex_coord[i_face][1]);
-        m_mesh_vertex.push_back(*face_lighting);
+        GLuint t = face_to_tex_index[i_face] | *face_lighting;
+        m_mesh_packed_data.push_back(t);
     }
 
     // use triangles for now because end purpose is to use triangles instead of quads
@@ -165,6 +164,7 @@ void MapManager::build_centered_on(const std::array<int, 3> &centre)
         line_of_z_noise.push_back(_get_noise(average, base_x - 1, z));
     }
     m_height_map_with_offset.push_back(line_of_z_noise);
+    bool switcher = false;
 
     for (int x = base_x; x < max_x; x++) // max_x
     {
@@ -184,8 +184,12 @@ void MapManager::build_centered_on(const std::array<int, 3> &centre)
 
             // Get where the highest face should be and fill if needed
             int delta_noise = current_noise - south_noise;
-            _add_face(std::array<GLint, 3>{x, current_noise, z}, faceID::TOP);
-            if (delta_noise == 0)
+            if (!switcher)
+            {
+                _add_face(std::array<GLint, 3>{x, current_noise, z}, faceID::TOP);
+                // switcher = true;
+            }
+            if (switcher || delta_noise == 0)
             {
             }
             else
@@ -206,7 +210,7 @@ void MapManager::build_centered_on(const std::array<int, 3> &centre)
                 }
             }
             delta_noise = current_noise - west_noise;
-            if (delta_noise == 0)
+            if (switcher || delta_noise == 0)
             {
             }
             else
@@ -239,8 +243,4 @@ std::array<std::array<int, 3>, 3> MapManager::get_adjacent_heights(const std::ar
 {
     std::array<std::array<int, 3>, 3> res;
     return res;
-}
-
-void MapManager::_compute_noise(const std::array<int, 3> &centre)
-{
 }

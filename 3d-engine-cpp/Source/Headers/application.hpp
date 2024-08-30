@@ -18,14 +18,9 @@ class Application
 public:
     Application();
     ~Application();
-    void initialiseApplication();
     int mainloop();
 
 private:
-    // FPS related
-    // ===========
-    double m_last_time;
-    unsigned int m_frame_counter;
 
     // Application "backend" related
     // =============================
@@ -33,8 +28,12 @@ private:
     GLFWwindow *m_window;
     GlComponents m_glcomponent;
     GameComponents m_game_components;
-    bool m_first_mouse;
-    glm::mat4 _processInput(float &delta_time);
+    bool m_first_mouse = true;
+    bool m_first_input = true;
+    // Tries to prevent sudden movement when mouse is first detected by application
+    // ! Not working yet
+
+    glm::mat4 _processInput(const float &delta_time);
     static void _mouse_callback_static(GLFWwindow *window, double xpos, double ypos);
     void _mouse_callback(double xpos, double ypos);
 
@@ -42,6 +41,6 @@ private:
     // ==========
 
     std::array<float, 2> m_last_coordinates;
-    void _show_UI();
-    void _showFPS(double &lastTime, unsigned int &frameCount);
+    void _show_UI(float &last_time, unsigned int &frame_counter);
+    std::optional<float> _compute_fps(float &last_time, unsigned int &frame_counter);
 };
