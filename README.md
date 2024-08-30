@@ -37,9 +37,9 @@ I have tried to have a clean structure, but I have little experience so I don't 
 ## Convention used
 
 - camelCase for functions
-- snake*case for variables
-- snake_case with "m*" prefix for member variables
-- UPPER_SNAKE_CASE for constant variables
+- snake_case for variables
+- snake_case with "m_" prefix for member variables
+- UPPER_SNAKE_CASE for constant global variables
 
 ## Sources
 

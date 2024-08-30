@@ -36,8 +36,7 @@ private:
     std::vector<GLuint> m_buffers;
     std::vector<GLuint> m_textures;
     std::optional<Shader> m_shader;
-    std::array<GLuint, 2> _loadVAO(Shader &shader);
-    std::array<GLuint, 3> _loadVAO_v2(std::vector<GLfloat> &vertices, std::vector<GLuint> &triangles);
+    std::array<GLuint, 3> _loadVAO(std::vector<GLfloat> &vertices, std::vector<GLuint> &triangles);
     std::array<GLuint, 2> _init_buffers(Shader &shader, std::vector<glm::vec3> &cubePositions);
     void _update_buffers(Shader &shader, std::vector<glm::vec3> &data, std::array<GLuint, 2> &buffers);
     void _render(Shader &shader, GLuint &VAO, const glm::mat4 &view, const std::vector<glm::vec3> &cubePositions);

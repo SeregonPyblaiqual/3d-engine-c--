@@ -6,7 +6,7 @@ GameComponents::GameComponents()
     std::array<int, 3> *camera_pos = m_camera.get_integer_pos();
 
     glm::vec3 new_pos(camera_pos->at(0),
-                      m_map_manager.m_height_map
+                      m_map_manager.m_height_map_with_offset
                               [1 + camera_pos->at(0) + Constants::MAP_SIZE / 2]
                               [1 + camera_pos->at(2) + Constants::MAP_SIZE / 2] +
                           2,

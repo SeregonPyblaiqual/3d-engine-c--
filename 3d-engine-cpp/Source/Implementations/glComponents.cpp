@@ -8,12 +8,12 @@ void GlComponents::initialise_components()
                                             (Constants::SHADERS_LOCATION + std::string("/shader.fs")).c_str())};
 
     glPolygonMode(GL_FRONT_AND_BACK, Constants::RENDER_MODE);
-    // glfwSwapInterval(0); // no cap of fps
+    glfwSwapInterval(0); // no cap of fps
 }
 
 void GlComponents::gl_init_buffers(std::vector<GLfloat> &vertices, std::vector<GLuint> &triangles)
 {
-    std::array<GLuint, 3> position_buffers = _loadVAO_v2(vertices, triangles);
+    std::array<GLuint, 3> position_buffers = _loadVAO(vertices, triangles);
 
     m_vertex_arrays.push_back(position_buffers[0]);
     m_buffers.push_back(position_buffers[1]);
@@ -105,268 +105,7 @@ GLFWwindow *GlComponents::initWindow()
     return window;
 }
 
-std::array<GLuint, 2> GlComponents::_loadVAO(Shader &shader)
-{
-    /*
-
-   y
-   |
-   |
-   /---x
-  /
- /
-z
-            E - F
-        /   G - H
-    A - B
-    C - D
-
-     */
-
-    GLfloat vertices[] = {
-        // back face
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 0.8f,   // F
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.8f,  // H
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.8f, // G
-
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.8f,  // E
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 0.8f,   // F
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.8f, // G
-
-        // front face
-        0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 0.8f,   // B
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.8f, // C
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.8f,  // D
-
-        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.8f,  // A
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.8f, // C
-        0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 0.8f,   // B
-
-        // left face
-        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.6f,   // A
-        -0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 0.6f,  // E
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.6f, // G
-
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.6f, // G
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.6f,  // C
-        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.6f,   // A
-
-        // right face
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.6f,   // B
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.6f, // H
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 0.6f,  // F
-
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.6f,   // B
-        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.6f,  // D
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.6f, // H
-
-        // bottom face
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.2f, // G
-        0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.2f,  // H
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.2f,   // D
-
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.2f,   // D
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.2f,  // C
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.2f, // G
-
-        // top face
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 1.0f, // E
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f,   // B
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,  // F
-
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 1.0f, // E
-        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,  // A
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f,   // B
-    };
-
-    /*Version where light is a type rather than the coeficient
-    float vertices[] = {
-        // back face
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,   // F
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 1.0f,  // H
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // G
-
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 1.0f,  // E
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,   // F
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // G
-
-        // front face
-        0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f,	  // B
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, // C
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 1.0f,  // D
-
-        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 1.0f,  // A
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, // C
-        0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f,	  // B
-
-        // left face
-        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 2.0f,   // A
-        -0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 2.0f,  // E
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 2.0f, // G
-
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 2.0f, // G
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 2.0f,  // C
-        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 2.0f,   // A
-
-        // right face
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 2.0f,	  // B
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 2.0f, // H
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 2.0f,  // F
-
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 2.0f,	  // B
-        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 2.0f,  // D
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 2.0f, // H
-
-        // bottom face
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 3.0f, // G
-        0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 3.0f,  // H
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 3.0f,   // D
-
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 3.0f,   // D
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 3.0f,  // C
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 3.0f, // G
-
-        // top face
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // E
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,	  // B
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 0.0f,  // F
-
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // E
-        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f,  // A
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,	  // B
-    };*/
-
-    /*
-    float vertices[] = {
-        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.8f,  // 0A
-        0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 0.8f,	  // 1B
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.6f, // 2C
-        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.6f,  // 3D
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.2f, // 4E
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 0.2f,  // 5F
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, // 6G
-        0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f,  // 7H
-    };
-    */
-
-    /*
-    float vertices[] = {
-        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 1.0f,  // 0A
-        0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f,	  // 1B
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, // 2C
-        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 2.0f,  // 3D
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // 4E
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 0.0f,  // 5F
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 3.0f, // 6G
-        0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 3.0f,  // 7H
-    };*/
-    /*
-    unsigned int indices[] = {
-        5,7,6, // F-H-G
-        4,5,6, // E-F-G
-        1,2,3, // B-C-D
-        0,2,1, // A-C-B
-        0,4,6, // A-E-G
-        6,2,0, // G-C-A
-        1,7,5, // B-H-F
-        1,3,7, // B-D-H
-        6,7,3, // G-H-D
-        3,2,6, // D-C-G
-        4,1,7, // E-B-F
-        4,0,1, // E-A-B
-    };*/
-
-    /*
-    float vertices[] = {
-        // back face
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,	 // F
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f,	 // H
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // G
-
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,	 // E
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,	 // F
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // G
-
-        // front face
-        0.5f, 0.5f, 0.5f, 1.0f, 1.0f,	// B
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // C
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,	// D
-
-        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,	// A
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // C
-        0.5f, 0.5f, 0.5f, 1.0f, 1.0f,	// B
-
-        // left face
-        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,	 // A
-        -0.5f, 0.5f, -0.5f, 1.0f, 1.0f,	 // E
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // G
-
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // G
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,	 // C
-        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,	 // A
-
-        // right face
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,	// B
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // H
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,	// F
-
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,	// B
-        0.5f, -0.5f, 0.5f, 0.0f, 0.0f,	// D
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // H
-
-        // bottom face
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // G
-        0.5f, -0.5f, -0.5f, 1.0f, 1.0f,	 // H
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,	 // D
-
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,	 // D
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,	 // C
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // G
-
-        // top face
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, // E
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,	// B
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,	// F
-
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, // E
-        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,	// A
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f	// B
-    };
-    */
-    _loadTexture();
-
-    GLuint VBO, VAO;
-    //, EBO;
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    // glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void *)0);
-    glEnableVertexAttribArray(0);
-    // color attribute
-    // texture attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);
-    // static light attribute
-    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat) + sizeof(GLfloat), (void *)(5 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    std::array<unsigned int, 2> data = {VAO, VBO}; // , EBO};
-    return data;
-}
-
-std::array<GLuint, 3> GlComponents::_loadVAO_v2(std::vector<GLfloat> &vertices, std::vector<GLuint> &triangles)
+std::array<GLuint, 3> GlComponents::_loadVAO(std::vector<GLfloat> &vertices, std::vector<GLuint> &triangles)
 {
     _loadTexture();
 
@@ -385,17 +124,20 @@ std::array<GLuint, 3> GlComponents::_loadVAO_v2(std::vector<GLfloat> &vertices, 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * triangles.size(), triangles.data(), GL_STATIC_DRAW);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void *)0);
+    unsigned int total_vertex_attrib = 6;
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, total_vertex_attrib * sizeof(GLfloat), (void *)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
+    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
+    // glEnableVertexAttribArray(1);
+    //  color attribute
+    //  texture attribute
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, total_vertex_attrib * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
-    // color attribute
-    // texture attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void *)(6 * sizeof(GLfloat)));
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, total_vertex_attrib * sizeof(GLfloat), (void *)(5 * sizeof(GLfloat)));
     glEnableVertexAttribArray(2);
     // static light attribute
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void *)(8 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(3);
+    // glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void *)(8 * sizeof(GLfloat)));
+    // glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 

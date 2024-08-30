@@ -3,20 +3,17 @@
 Application::Application() : m_glcomponent(),     // does nothing
                              m_game_components(), // builds the map mesh and centers the camera above ground
                              m_frame_counter(0),
-                             
+
                              m_first_mouse(true)
-                             // Tries to prevent sudden movement when mouse is first detected by application
-                             // ! Not working yet
+// Tries to prevent sudden movement when mouse is first detected by application
+// ! Not working yet
 {
     // UI related variables: only display new positions
     m_last_coordinates[0] = Constants::WINDOW_WIDTH / 2;
     m_last_coordinates[1] = Constants::WINDOW_HEIGHT / 2;
 }
 Application::~Application() {}
-void initialiseApplication()
-{
-}
-int Application::mainloop()
+void Application::initialiseApplication()
 {
     m_window = m_glcomponent.initWindow();
     m_glcomponent.initialise_components();
@@ -25,6 +22,9 @@ int Application::mainloop()
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetWindowUserPointer(m_window, this);
     glfwSetCursorPosCallback(m_window, Application::_mouse_callback_static);
+}
+int Application::mainloop()
+{
 
     // Opengl initialisation
     // =====================

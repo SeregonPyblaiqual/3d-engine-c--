@@ -18,7 +18,7 @@ class Application
 public:
     Application();
     ~Application();
-
+    void initialiseApplication();
     int mainloop();
 
 private:
