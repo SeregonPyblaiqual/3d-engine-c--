@@ -127,28 +127,28 @@ bool Camera::compute_facing_cube(std::vector<std::array<int, 3>> &data)
     return false;
 }
 // update->plane
-void Camera::update_front_manner(float &delta_time)
+void Camera::update_front_manner(const float &delta_time)
 {
     m_camera_pos += M_CAMERA_SPEED * delta_time * m_camera_front * m_speed_multiplier;
 }
-void Camera::update_ortho_front_manner(float &delta_time)
+void Camera::update_ortho_front_manner(const float &delta_time)
 {
     m_camera_pos += m_camera_ortho_front * M_CAMERA_SPEED * delta_time * m_speed_multiplier;
 }
-void Camera::update_up_manner(float &delta_time)
+void Camera::update_up_manner(const float &delta_time)
 {
     m_camera_pos += M_CAMERA_SPEED * delta_time * M_CAMERA_UP * m_speed_multiplier;
 }
-void Camera::update_west_manner(float &delta_time)
+void Camera::update_west_manner(const float &delta_time)
 {
     m_camera_pos += M_CAMERA_SPEED * delta_time * m_camera_west * m_speed_multiplier;
 }
-void Camera::update_north_manner(float &delta_time)
+void Camera::update_north_manner(const float &delta_time)
 {
     m_camera_pos += M_CAMERA_SPEED * delta_time * m_camera_plane_front * m_speed_multiplier;
 }
 
-void Camera::update_angles(std::array<float, 2> &offset)
+void Camera::update_angles(const std::array<float, 2> &offset)
 {
     m_yaw += offset[0] * M_SENSITIVITY;
     m_pitch += offset[1] * M_SENSITIVITY;

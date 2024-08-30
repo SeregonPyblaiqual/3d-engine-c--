@@ -7,6 +7,5 @@ const int map_height = 256;
 int main()
 {
     Application game;
-    game.initialiseApplication();
     game.mainloop();
 }

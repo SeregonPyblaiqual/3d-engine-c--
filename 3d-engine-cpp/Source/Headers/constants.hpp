@@ -12,12 +12,13 @@ namespace Constants
     // Window dimensions
     constexpr int WINDOW_WIDTH = 1800;  // 900;  // 1800;  // 1920;
     constexpr int WINDOW_HEIGHT = 1000; // 500; // 1000; // 1080;
-    constexpr int MAP_SIZE = 2048;      // 64;       // 256;       // 2048;
+    constexpr int MAP_SIZE = 2048;      // 64; // 256; // 2048; // 4096
     constexpr int HEIGHT_RANGE = 50;
-    constexpr unsigned int VERTEX_ATTRIBUTES = 6;
-    // 2048 = 14 fps (pluged-in) // 4,194,304
+    constexpr unsigned int VERTEX_ATTRIBUTES = 4;
+    // 2048 = 60 fps (pluged-in) // 4,194,304
     // 4096 = 3 fps (pluged-in) // 16,777,216
     // 8192 = 1 fps (pluged-in: max, rather 0.1 fps...) // 67,108,864
+    // 10 Go + memory... cannot load anymore
 #if DEBUG
     constexpr auto RENDER_MODE = GL_LINE;
 #else

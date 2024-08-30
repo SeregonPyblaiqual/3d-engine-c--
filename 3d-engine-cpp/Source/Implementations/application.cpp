@@ -1,28 +1,52 @@
 #include "application.hpp"
 
-Application::Application() : m_glcomponent(),     // does nothing
-                             m_game_components(), // builds the map mesh and centers the camera above ground
-                             m_frame_counter(0),
-
-                             m_first_mouse(true)
-// Tries to prevent sudden movement when mouse is first detected by application
-// ! Not working yet
+Application::Application() : m_glcomponent(),    // does nothing
+                             m_game_components() // builds the map mesh and centers the camera above ground
 {
     // UI related variables: only display new positions
     m_last_coordinates[0] = Constants::WINDOW_WIDTH / 2;
     m_last_coordinates[1] = Constants::WINDOW_HEIGHT / 2;
-}
-Application::~Application() {}
-void Application::initialiseApplication()
-{
-    m_window = m_glcomponent.initWindow();
+
+    // Init glfw
+    // =========
+    glfwInit();
+    // Working with opengl 3.3
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // MACOS specific
+
+    // Create window
+    // =============
+
+    m_window = glfwCreateWindow(Constants::WINDOW_WIDTH, Constants::WINDOW_HEIGHT, Constants::APPLICATION_NAME.c_str(), NULL, NULL);
+    if (m_window == NULL)
+    {
+        std::cout << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        throw std::runtime_error("");
+    }
+    glfwMakeContextCurrent(m_window);
+
+    //
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        throw std::runtime_error("");
+    }
+    glfwSetFramebufferSizeCallback(m_window, GlComponents::framebuffer_size_callback);
+
     m_glcomponent.initialise_components();
-    m_glcomponent.gl_init_buffers(m_game_components.m_map_manager.m_mesh_vertex, m_game_components.m_map_manager.m_mesh_triangle);
+    // ! Not clean code
+    m_glcomponent.gl_init_buffers(m_game_components.m_map_manager.m_mesh_vertex, m_game_components.m_map_manager.m_mesh_packed_data, m_game_components.m_map_manager.m_mesh_triangle);
 
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetWindowUserPointer(m_window, this);
     glfwSetCursorPosCallback(m_window, Application::_mouse_callback_static);
+    glfwSwapInterval(0); // no cap of fps
 }
+Application::~Application() {}
 int Application::mainloop()
 {
 
@@ -30,8 +54,8 @@ int Application::mainloop()
     // =====================
 
     // Variables for FPS calculation
-    float last_time = float(glfwGetTime()), delta_time;
-    int frameCount = 0;
+    float last_time = float(glfwGetTime()), delta_time, last_time_fps;
+    unsigned int frame_counter = 0;
 
     glm::vec3 last_cube, last_camera_pos;
     while (!glfwWindowShouldClose(m_window))
@@ -43,16 +67,14 @@ int Application::mainloop()
         // buffers.push_back(buffer_ids[0]);
         // textures.push_back(buffer_ids[1]);
 
-        float current_frame = float(glfwGetTime());
+        double current_frame = glfwGetTime();
         delta_time = current_frame - last_time;
         last_time = current_frame;
 
         glm::mat4 view = _processInput(delta_time);
-        // rendering
-        // m_glcomponent.glRender(view, m_game_components.m_map_manager.m_data);
-        // m_game_components.m_camera.compute_facing_cube(m_game_components.m_map_manager.m_cubes_positions);
-        m_glcomponent._renderv2(m_glcomponent.m_vertex_arrays.back(), view, m_game_components.m_map_manager.m_mesh_triangle.size());
-        _show_UI();
+
+        m_glcomponent.render(m_glcomponent.m_vertex_arrays.back(), view, m_game_components.m_map_manager.m_mesh_triangle.size());
+        _show_UI(last_time_fps, frame_counter);
 
         glfwSwapBuffers(m_window);
         glfwPollEvents();
@@ -69,7 +91,7 @@ int Application::mainloop()
     return 0;
 }
 
-void Application::_show_UI()
+void Application::_show_UI(float &last_time, unsigned int &frame_counter)
 {
     if (m_game_components.m_camera.compute_camera_floored_position())
     {
@@ -88,10 +110,16 @@ void Application::_show_UI()
     }*/
 
     // Calculate delta time and FPS
-    _showFPS(m_last_time, m_frame_counter);
+    auto fps = _compute_fps(last_time, frame_counter);
+    if (fps.has_value())
+    {
+        std::stringstream titleStream("");
+        titleStream << Constants::APPLICATION_NAME << " - FPS: " << std::fixed << std::setprecision(2) << fps.value();
+        glfwSetWindowTitle(m_window, titleStream.str().c_str());
+    }
 }
 
-glm::mat4 Application::_processInput(float &delta_time)
+glm::mat4 Application::_processInput(const float &delta_time)
 {
     float opposite_delta = -delta_time;
     if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -156,18 +184,17 @@ void Application::_mouse_callback(double xpos, double ypos)
     }
 }
 
-void Application::_showFPS(double &lastTime, unsigned int &frameCount)
+std::optional<float> Application::_compute_fps(float &last_time_fps, unsigned int &frame_counter)
 {
-    double currentTime = glfwGetTime();
-    double deltaTime = currentTime - lastTime;
-    frameCount++;
-    std::stringstream titleStream("");
-    if (deltaTime >= 1.0)
+    double current_time = glfwGetTime();
+    double delta_time = current_time - last_time_fps;
+    frame_counter++;
+    if (delta_time >= 1.0)
     {
-        double fps = frameCount / deltaTime;
-        titleStream << Constants::APPLICATION_NAME << " - FPS: " << std::fixed << std::setprecision(2) << fps;
-        glfwSetWindowTitle(m_window, titleStream.str().c_str());
-        frameCount = 0;
-        lastTime = currentTime;
+        float fps = static_cast<float>(frame_counter / delta_time);
+        frame_counter = 0;
+        last_time_fps = current_time;
+        return std::optional<float>(fps);
     }
+    return std::nullopt;
 }

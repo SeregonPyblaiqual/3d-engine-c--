@@ -11,27 +11,7 @@ uniform sampler2D texture0;
 void main()
 {
     // Set the base color to the texture color
-    vec4 baseColor = texture(texture0, TexCoord);// vec4(1.0, 1.0, 1.0, 1.0);// texture(texture0, TexCoord);//
-    //float faceLight=1.0f;
-    /*
-    if (gNormal==vec3(1.0,0.0,0.0)){
-        faceLight = 0.8f;
-    }
-    if (gNormal==vec3(-1.0,0.0,0.0)){
-        faceLight = 0.8f;
-    }
-    if (gNormal==vec3(0.0,1.0,0.0)){
-        faceLight = 1.0f;
-    }
-    if (gNormal==vec3(0.0,-1.0,0.0)){
-        faceLight = 0.2f;
-    }
-    if (gNormal==vec3(0.0,0.0,1.0)){
-        faceLight = 0.6f;
-    }
-    if (gNormal==vec3(0.0,0.0,-1.0)){
-        faceLight = 0.6f;
-    }*/
+    vec4 baseColor = texture(texture0, TexCoord);//vec4(1.0, 1.0, 1.0, 1.0);// texture(texture0, TexCoord);//
 
     vec3 orientationColor = vec3(FaceLight, FaceLight, FaceLight);//vec3(1.0,1.0,1.0);//vec3(faceLight, faceLight, faceLight);
     
