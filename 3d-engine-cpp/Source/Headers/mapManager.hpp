@@ -35,5 +35,5 @@ public:
 private:
     void _compute_noise(const std::array<int, 3> &centre);
     int _get_noise(const int &average, const int &x, const int &z);
-    void _add_face(const std::array<GLint, 3> &vertice, const std::array<GLuint, 4> &face_vertices);
+    void _add_face(const std::array<GLint, 3> &vertice, const faceID &face_id);
 };

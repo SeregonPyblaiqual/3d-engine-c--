@@ -14,6 +14,7 @@ namespace Constants
     constexpr int WINDOW_HEIGHT = 1000; // 500; // 1000; // 1080;
     constexpr int MAP_SIZE = 2048;      // 64;       // 256;       // 2048;
     constexpr int HEIGHT_RANGE = 50;
+    constexpr unsigned int VERTEX_ATTRIBUTES = 6;
     // 2048 = 14 fps (pluged-in) // 4,194,304
     // 4096 = 3 fps (pluged-in) // 16,777,216
     // 8192 = 1 fps (pluged-in: max, rather 0.1 fps...) // 67,108,864

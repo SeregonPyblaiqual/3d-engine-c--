@@ -5,7 +5,6 @@ GlComponents::GlComponents() {}
 void GlComponents::initialise_components()
 {
     m_shader = std::optional<Shader>{Shader((Constants::SHADERS_LOCATION + std::string("/shader.vs")).c_str(),
-                                            (Constants::SHADERS_LOCATION + std::string("/shader.gs")).c_str(),
                                             (Constants::SHADERS_LOCATION + std::string("/shader.fs")).c_str())};
 
     glPolygonMode(GL_FRONT_AND_BACK, Constants::RENDER_MODE);
@@ -125,14 +124,17 @@ std::array<GLuint, 3> GlComponents::_loadVAO(std::vector<GLfloat> &vertices, std
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * triangles.size(), triangles.data(), GL_STATIC_DRAW);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)0);
+    unsigned int total_vertex_attrib = 6;
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, total_vertex_attrib * sizeof(GLfloat), (void *)0);
     glEnableVertexAttribArray(0);
     // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
     // glEnableVertexAttribArray(1);
     //  color attribute
     //  texture attribute
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, total_vertex_attrib * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, total_vertex_attrib * sizeof(GLfloat), (void *)(5 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(2);
     // static light attribute
     // glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void *)(8 * sizeof(GLfloat)));
     // glEnableVertexAttribArray(3);

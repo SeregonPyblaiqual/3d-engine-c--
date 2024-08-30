@@ -25,7 +25,7 @@ std::array<std::array<float, 3>, 8> vertices_offset = {{
     {{+0.5f, -0.5f, -0.5f}},
     {{+0.5f, -0.5f, +0.5f}},
 }};
-namespace face_to_vertices
+namespace INDEXES
 {
     std::array<GLuint, 4> South = {{0, 1, 2, 3}};
     std::array<GLuint, 4> North = {{5, 4, 7, 6}};
@@ -35,6 +35,16 @@ namespace face_to_vertices
     std::array<GLuint, 4> East = {{2, 5, 3, 7}};
 };
 
+namespace LIGHTING
+{
+    GLfloat South = 0.8f;
+    GLfloat North = 0.8f;
+    GLfloat Top = 1.0f;
+    GLfloat Bottom = 0.2f;
+    GLfloat East = 0.6f;
+    GLfloat West = 0.8f;
+};
+
 std::array<std::array<float, 2>, 4> face_to_tex_coord = {{
     {{0.0f, 1.0f}},
     {{1.0f, 1.0f}},
@@ -42,18 +52,79 @@ std::array<std::array<float, 2>, 4> face_to_tex_coord = {{
     {{1.0f, 0.0f}},
 }};
 
-void MapManager::_add_face(const std::array<GLint, 3> &vertice, const std::array<GLuint, 4> &face_vertices)
+const std::array<GLuint, 4> *face_to_indexes(const faceID &face_id)
 {
-    unsigned int starting_index = m_mesh_vertex.size() / 5;
+    const std::array<GLuint, 4> *vert_indexes = nullptr;
+    switch (face_id)
+    {
+    case faceID::SOUTH:
+        vert_indexes = &INDEXES::South;
+        break;
+    case faceID::WEST:
+        vert_indexes = &INDEXES::West;
+        break;
+    case faceID::EAST:
+        vert_indexes = &INDEXES::East;
+        break;
+    case faceID::NORTH:
+        vert_indexes = &INDEXES::North;
+        break;
+    case faceID::TOP:
+        vert_indexes = &INDEXES::Top;
+        break;
+    case faceID::BOTTOM:
+        vert_indexes = &INDEXES::Bottom;
+        break;
+    default:
+        break;
+    }
+    return vert_indexes;
+}
 
+const float *face_to_lighting(const faceID &face_id)
+{
+    const float *lighting = nullptr;
+    switch (face_id)
+    {
+    case faceID::SOUTH:
+        lighting = &LIGHTING::South;
+        break;
+    case faceID::WEST:
+        lighting = &LIGHTING::West;
+        break;
+    case faceID::EAST:
+        lighting = &LIGHTING::East;
+        break;
+    case faceID::NORTH:
+        lighting = &LIGHTING::North;
+        break;
+    case faceID::TOP:
+        lighting = &LIGHTING::Top;
+        break;
+    case faceID::BOTTOM:
+        lighting = &LIGHTING::Bottom;
+        break;
+    default:
+        break;
+    }
+    return lighting;
+}
+
+void MapManager::_add_face(const std::array<GLint, 3> &vertice, const faceID &face_id)
+{
+
+    unsigned int starting_index = m_mesh_vertex.size() / Constants::VERTEX_ATTRIBUTES;
+    auto vert_indexes = face_to_indexes(face_id);
+    auto face_lighting = face_to_lighting(face_id);
     for (unsigned int i_face = 0; i_face < 4; i_face++)
     {
         for (unsigned int i_vertice = 0; i_vertice < 3; i_vertice++)
         {
-            m_mesh_vertex.push_back(vertice[i_vertice] + vertices_offset[face_vertices[i_face]][i_vertice]);
+            m_mesh_vertex.push_back(vertice[i_vertice] + vertices_offset[vert_indexes->at(i_face)][i_vertice]);
         }
         m_mesh_vertex.push_back(face_to_tex_coord[i_face][0]);
         m_mesh_vertex.push_back(face_to_tex_coord[i_face][1]);
+        m_mesh_vertex.push_back(*face_lighting);
     }
 
     // use triangles for now because end purpose is to use triangles instead of quads
@@ -113,7 +184,7 @@ void MapManager::build_centered_on(const std::array<int, 3> &centre)
 
             // Get where the highest face should be and fill if needed
             int delta_noise = current_noise - south_noise;
-            _add_face(std::array<GLint, 3>{x, current_noise, z}, face_to_vertices::Top);
+            _add_face(std::array<GLint, 3>{x, current_noise, z}, faceID::TOP);
             if (delta_noise == 0)
             {
             }
@@ -123,14 +194,14 @@ void MapManager::build_centered_on(const std::array<int, 3> &centre)
                 {
                     for (int i = 0; i < delta_noise; i++)
                     {
-                        _add_face(std::array<GLint, 3>{x, current_noise - i, z}, face_to_vertices::South);
+                        _add_face(std::array<GLint, 3>{x, current_noise - i, z}, faceID::SOUTH);
                     }
                 }
                 else // delta_noise < 0
                 {
                     for (int i = 0; i < -delta_noise; i++)
                     {
-                        _add_face(std::array<GLint, 3>{x, current_noise + 1 + i, z}, face_to_vertices::South);
+                        _add_face(std::array<GLint, 3>{x, current_noise + 1 + i, z}, faceID::SOUTH);
                     }
                 }
             }
@@ -144,14 +215,14 @@ void MapManager::build_centered_on(const std::array<int, 3> &centre)
                 {
                     for (int i = 0; i < delta_noise; i++)
                     {
-                        _add_face(std::array<GLint, 3>{x, current_noise - i, z}, face_to_vertices::West);
+                        _add_face(std::array<GLint, 3>{x, current_noise - i, z}, faceID::WEST);
                     }
                 }
                 else // delta_noise < 0
                 {
                     for (int i = 0; i < -delta_noise; i++)
                     {
-                        _add_face(std::array<GLint, 3>{x, current_noise + 1 + i, z}, face_to_vertices::West);
+                        _add_face(std::array<GLint, 3>{x, current_noise + 1 + i, z}, faceID::WEST);
                     }
                 }
             }
